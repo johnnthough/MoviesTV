@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./navbar";
 
 // Sample movie data to use in the slider
@@ -51,6 +51,14 @@ const HeroSlider = () => {
       prevIndex === 0 ? movies.length - 1 : prevIndex - 1
     );
   };
+
+  useEffect(() => {
+    const sliderInterval = setInterval(() => {
+      nextMovie();
+    }, 5000); // 5000ms = 5 seconds
+
+    return () => clearInterval(sliderInterval);
+  }, [currentMovieIndex]); // Dependency array: restart the timer whenever the slide changes
 
   // Conditional rendering: If the movies array is empty, show a loading message
   if (movies.length === 0) {
