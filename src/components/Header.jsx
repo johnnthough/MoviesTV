@@ -55,24 +55,22 @@ const HeroSlider = () => {
   useEffect(() => {
     const sliderInterval = setInterval(() => {
       nextMovie();
-    }, 5000); // 5000ms = 5 seconds
+    }, 5000);
 
     return () => clearInterval(sliderInterval);
-  }, [currentMovieIndex]); // Dependency array: restart the timer whenever the slide changes
+  }, [currentMovieIndex]);
 
-  // Conditional rendering: If the movies array is empty, show a loading message
   if (movies.length === 0) {
     return <div>Loading...</div>;
   }
 
-  // Access the current movie only after confirming the array is not empty
   const currentMovie = movies[currentMovieIndex];
 
   return (
     <>
       <Navbar />
       <div
-        className="relative flex min-h-screen items-center px-4 text-white transition-all duration-500 ease-in-out"
+        className="relative flex min-h-screen items-center text-white transition-all duration-500 ease-in-out"
         style={{
           backgroundImage: `url("${currentMovie.image}")`,
           backgroundSize: "cover",
@@ -80,7 +78,7 @@ const HeroSlider = () => {
         }}
       >
         <div className="absolute inset-0 bg-black opacity-70"></div>
-        <div className="relative flex flex-col w-full max-w-6xl mx-auto py-8">
+        <div className="relative flex flex-col w-full max-w-8xl mx-auto py-8 px-4 sm:px-6 md:px-8 lg:px-16">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             {currentMovie.title}
           </h1>
