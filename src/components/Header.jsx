@@ -1,44 +1,42 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./navbar";
 
-// Sample movie data to use in the slider
-const movies = [
-  {
-    title: "Movie Title 1",
-    description:
-      "Description for Movie 1. This is a longer description to show how it would look in the slider. It should be engaging and give a good overview of the film.",
-    year: "2024",
-    genre: "ACTION",
-    image: "/AI-Literacy.jpg",
-  },
-  {
-    title: "Movie Title 2",
-    description:
-      "Description for Movie 2. This movie is a must-watch for fans of the genre. Full of suspense and thrilling moments from start to finish.",
-    year: "2023",
-    genre: "COMEDY",
-    image: "/brands-people-Ax8IA8GAjVg-unsplash.jpg",
-  },
-  {
-    title: "Movie Title 3",
-    description:
-      "A heartfelt and emotional journey that will leave you thinking long after the credits roll. A truly cinematic experience.",
-    year: "2022",
-    genre: "DRAMA",
-    image: "/img.webp",
-  },
-  {
-    title: "Movie Title 4",
-    description:
-      "A heartfelt and emotional journey that will leave you thinking long after the credits roll. A truly cinematic experience.",
-    year: "2022",
-    genre: "DRAMA",
-    image: "/cytonn-photography-n95VMLxqM2I-unsplash.jpg",
-  },
-];
-
 const HeroSlider = () => {
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
+
+  // useEffect to fetch data when the component mounts
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d"; // ⚠️ Replace with your actual API key
+        const response = await fetch(
+          `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`
+        );
+        const data = await response.json();
+        setMovies(data.results); // Assuming 'results' is the key with movie data
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  // Effect for the automatic slider
+  useEffect(() => {
+    if (movies.length > 0) {
+      const sliderInterval = setInterval(() => {
+        setCurrentMovieIndex((prevIndex) =>
+          prevIndex === movies.length - 1 ? 0 : prevIndex + 1
+        );
+      }, 9000);
+      return () => clearInterval(sliderInterval);
+    }
+  }, [currentMovieIndex, movies]);
 
   const nextMovie = () => {
     setCurrentMovieIndex((prevIndex) =>
@@ -52,19 +50,17 @@ const HeroSlider = () => {
     );
   };
 
-  useEffect(() => {
-    const sliderInterval = setInterval(() => {
-      nextMovie();
-    }, 5000);
-
-    return () => clearInterval(sliderInterval);
-  }, [currentMovieIndex]);
-
-  if (movies.length === 0) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
+  if (movies.length === 0) {
+    return <div>No movies found.</div>;
+  }
+
   const currentMovie = movies[currentMovieIndex];
+  // Construct the full image URL from the API response
+  const imageUrl = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
 
   return (
     <>
@@ -72,7 +68,7 @@ const HeroSlider = () => {
       <div
         className="relative flex min-h-screen items-center text-white transition-all duration-500 ease-in-out"
         style={{
-          backgroundImage: `url("${currentMovie.image}")`,
+          backgroundImage: `url("${imageUrl}")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -80,18 +76,20 @@ const HeroSlider = () => {
         <div className="absolute inset-0 bg-black opacity-70"></div>
         <div className="relative flex flex-col w-full max-w-8xl mx-auto py-8 px-4 sm:px-6 md:px-8 lg:px-16">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {currentMovie.title}
+            {currentMovie.title || currentMovie.name}
           </h1>
-          <p className="text-lg lg:text-lg sm:text-base md:text-base max-w-xl mb-4">
-            {currentMovie.description}
-          </p>
           <div className="flex items-center gap-3 mt-4 text-sm font-semibold text-gray-300">
             <span className="bg-black px-4 py-3 text-white">
-              {currentMovie.year}
+              {currentMovie.release_date
+                ? new Date(currentMovie.release_date).getFullYear()
+                : "N/A"}
             </span>
             <span className="text-white">|</span>
             <span className="bg-black px-4 py-3 text-white">
-              {currentMovie.genre}
+              {/* Note: Genres are often returned as IDs, you may need a separate API call to map them to names */}
+              {currentMovie.genre_ids && currentMovie.genre_ids.length > 0
+                ? "GENRE"
+                : "N/A"}
             </span>
           </div>
           <div className="flex flex-row gap-10 items-center mt-6">
