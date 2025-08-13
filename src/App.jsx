@@ -43,7 +43,6 @@ const App = () => {
   return (
     <div>
       <Header />
-      <SearchBar onSearch={handleSearch} />
       <Movies movies={movies} /> 
     </div>
   );
