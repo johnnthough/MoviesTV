@@ -6,16 +6,16 @@ const HeroSlider = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
 
-  // useEffect to fetch data when the component mounts
+  
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d"; // ⚠️ Replace with your actual API key
+        const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d"; 
         const response = await fetch(
           `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`
         );
         const data = await response.json();
-        setMovies(data.results); // Assuming 'results' is the key with movie data
+        setMovies(data.results); 
       } catch (error) {
         console.error("Failed to fetch movies:", error);
       } finally {
@@ -59,7 +59,7 @@ const HeroSlider = () => {
   }
 
   const currentMovie = movies[currentMovieIndex];
-  // Construct the full image URL from the API response
+  
   const imageUrl = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
 
   return (
@@ -86,7 +86,6 @@ const HeroSlider = () => {
             </span>
             <span className="text-white">|</span>
             <span className="bg-black px-4 py-3 text-white">
-              {/* Note: Genres are often returned as IDs, you may need a separate API call to map them to names */}
               {currentMovie.genre_ids && currentMovie.genre_ids.length > 0
                 ? "GENRE"
                 : "N/A"}
