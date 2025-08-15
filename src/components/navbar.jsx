@@ -23,7 +23,7 @@ const Navbar = () => {
             MoviesTV
           </div>
           
-          <div className="flex-1 max-w-md mx-8">
+          <div>
             <SearchBar onSearch={handleSearch} />
           </div>
           

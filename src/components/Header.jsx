@@ -71,8 +71,8 @@ const Header = () => {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-black opacity-70"></div>
-        <div className="relative flex flex-col w-full max-w-8xl mx-auto py-8 px-4 sm:px-6 md:px-8 lg:px-16">
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="relative flex flex-col w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 md:px-8 ">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">
             {currentMovie.title || currentMovie.name}
           </h1>
