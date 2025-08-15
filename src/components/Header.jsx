@@ -4,26 +4,42 @@ import Navbar from "./navbar";
 
 const Header = () => { 
   const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchData = async () => {
       try {
         const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d";
-        const response = await fetch(
+        
+        // Fetch genres list
+        const genresResponse = await fetch(
+          `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`
+        );
+        const genresData = await genresResponse.json();
+        
+        // Create a mapping object for quick lookup
+        const genresMap = {};
+        genresData.genres.forEach(genre => {
+          genresMap[genre.id] = genre.name;
+        });
+        setGenres(genresMap);
+
+        // Fetch trending movies
+        const moviesResponse = await fetch(
           `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`
         );
-        const data = await response.json();
-        setMovies(data.results);
+        const moviesData = await moviesResponse.json();
+        setMovies(moviesData.results);
       } catch (error) {
-        console.error("Failed to fetch movies:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchMovies();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -58,8 +74,16 @@ const Header = () => {
   }
 
   const currentMovie = movies[currentMovieIndex];
-
   const imageUrl = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
+
+  // Get the first genre name or fallback to "N/A"
+  const getGenreName = () => {
+    if (currentMovie.genre_ids && currentMovie.genre_ids.length > 0) {
+      const firstGenreId = currentMovie.genre_ids[0];
+      return genres[firstGenreId] || "N/A";
+    }
+    return "N/A";
+  };
 
   return (
     <>
@@ -84,9 +108,7 @@ const Header = () => {
             </span>
             <span className="text-white">|</span>
             <span className="bg-black px-4 py-3 text-white">
-              {currentMovie.genre_ids && currentMovie.genre_ids.length > 0
-                ? "GENRE"
-                : "N/A"}
+              {getGenreName()}
             </span>
           </div>
           <div className="flex flex-row gap-10 items-center mt-6">
@@ -117,4 +139,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;
