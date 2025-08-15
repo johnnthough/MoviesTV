@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link
 import Navbar from "./navbar";
 
-const HeroSlider = () => {
+const Header = () => { 
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
 
-  
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d"; 
+        const apiKey = "4a7b7e7e66e45bdee313439ca81dce8d";
         const response = await fetch(
           `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`
         );
         const data = await response.json();
-        setMovies(data.results); 
+        setMovies(data.results);
       } catch (error) {
         console.error("Failed to fetch movies:", error);
       } finally {
@@ -26,7 +26,6 @@ const HeroSlider = () => {
     fetchMovies();
   }, []);
 
-  // Effect for the automatic slider
   useEffect(() => {
     if (movies.length > 0) {
       const sliderInterval = setInterval(() => {
@@ -59,12 +58,11 @@ const HeroSlider = () => {
   }
 
   const currentMovie = movies[currentMovieIndex];
-  
+
   const imageUrl = `https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}`;
 
   return (
     <>
-      <Navbar />
       <div
         className="relative flex min-h-screen items-center text-white transition-all duration-500 ease-in-out"
         style={{
@@ -92,9 +90,12 @@ const HeroSlider = () => {
             </span>
           </div>
           <div className="flex flex-row gap-10 items-center mt-6">
-            <button className="bg-white text-black font-semibold px-8 py-3 w-fit">
+            <Link
+              to={`/movies/${currentMovie.id}`}
+              className="bg-white text-black font-semibold px-8 py-3 w-fit"
+            >
               Read More
-            </button>
+            </Link>
             <div className="flex items-end gap-8">
               <img
                 src="/arrow-back.png"
@@ -116,4 +117,4 @@ const HeroSlider = () => {
   );
 };
 
-export default HeroSlider;
+export default Header; 
